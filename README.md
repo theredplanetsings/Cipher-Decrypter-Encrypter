@@ -1,6 +1,6 @@
 # Cipher Encrypter/Decrypter
 
-This Python program provides functionality to encrypt/decrypt ciphers from .txt files or manually-typed input using the bruteforce method. Currently, it supports the Caesar cipher and the Vigenere cipher.
+This Python program provides functionality to encrypt/decrypt ciphers from .txt files or manually-typed input using the bruteforce method or a given key. Currently, it supports the Caesar cipher and the Vigenere cipher.
 
 ## Dependencies
 - Python 3.x
