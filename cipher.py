@@ -1,10 +1,8 @@
 import string
 import os
 """
-This program provides functionality to bruteforce Caesar ciphers, 
-and it encrypts/decrypts using the Vigenère Cipher with a given key.
-
-Both can be used to decode text either from a file or by manual input.
+This program provides functionality for encrypting and decrypting text
+using various classical ciphers, currently being the Caesar Cipher, Vigenère Cipher, and Rail Fence Cipher.
 
 Usage:
     python3 cipher.py
@@ -37,11 +35,14 @@ Functions:
     decrypt_vigenere(text, key):
         Decrypts the input text using the Vigenère Cipher with the specified key.
 
-    crack_vigenere(cipher_text, max_key_length=50):
-        Bruteforces the Vigenère cipher with a maximum key length (default is 50).
+    encrypt_rail_fence(text, key):
+        Encrypts the input text using the Rail Fence Cipher with the specified key.
+
+    decrypt_rail_fence(text, key):
+        Decrypts the input text using the Rail Fence Cipher with the specified key.
 
     select_cipher_type():
-        Prompts the user to select the cipher type: Caesar Cipher or Vigenère Cipher.
+        Prompts the user to select the cipher type: Caesar Cipher, Vigenère Cipher, or Rail Fence Cipher.
 
     main():
         Executes the main functionality of the program:
@@ -171,27 +172,101 @@ def decrypt_vigenere(text, key):
             decrypted_text += char
     return decrypted_text
 
-def crack_vigenere(cipher_text, max_key_length=50):
-    output = ""
-    output += "Bruteforcing through all possible Vigenère cipher variations...\n"
-    for key_length in range(1, min(max_key_length, len(cipher_text)) + 1):
-        output += f"Trying key length: {key_length}\n"
-        for key_index in range(key_length):
-            possible_key = ""
-            for i in range(key_index, len(cipher_text), key_length):
-                possible_key += cipher_text[i]
-            output += f"  Subkey at index {key_index}: {possible_key}\n"
-    return output
+def encrypt_rail_fence(text, key):
+    if key == 1:  # Edge case: if key is 1, return the original text
+        return text
+    
+    # Encryption logic for Rail Fence Cipher
+    # Initialize empty list to store rails
+    rails = [[] for _ in range(key)]
+    
+    # Variables to keep track of the current rail and direction
+    current_rail = 0
+    going_down = False
+    
+    # Fill the rails
+    for char in text:
+        # Add the character to the current rail
+        rails[current_rail].append(char)
+        # Check if we need to change direction
+        if current_rail == 0 or current_rail == key - 1:
+            going_down = not going_down
+        # Move to the next rail
+        if going_down:
+            current_rail += 1
+        else:
+            current_rail -= 1
+    
+    # Concatenate the rails to get the encrypted text
+    encrypted_text = ''.join([''.join(rail) for rail in rails])
+    return encrypted_text
+
+def decrypt_rail_fence(text, key):
+    # Decryption logic for Rail Fence Cipher
+    # Initialize an empty grid to reconstruct the rails
+    grid = [['' for _ in range(len(text))] for _ in range(key)]
+    
+    # Variables to keep track of the current rail and direction
+    current_row = 0
+    going_down = False
+    
+    # Fill the grid with placeholder characters to represent the rails
+    for i in range(len(text)):
+        grid[current_row][i] = '*'
+        if current_row == 0 or current_row == key - 1:
+            going_down = not going_down
+        if going_down:
+            current_row += 1
+        else:
+            current_row -= 1
+    
+    # Populate the grid with the characters from the encrypted text
+    index = 0
+    for i in range(key):
+        for j in range(len(text)):
+            if grid[i][j] == '*' and index < len(text):
+                grid[i][j] = text[index]
+                index += 1
+    
+    # Reconstruct the rails from the grid
+    rail_indices = [[] for _ in range(key)]
+    current_row = 0
+    going_down = False
+    for i in range(len(text)):
+        rail_indices[current_row].append(i)
+        if current_row == 0 or current_row == key - 1:
+            going_down = not going_down
+        if going_down:
+            current_row += 1
+        else:
+            current_row -= 1
+
+    # Construct the decrypted text from the rail indices
+    decrypted_text = ''
+    for i in range(len(text)):
+        for row in range(key):
+            if i in rail_indices[row]:
+                decrypted_text += grid[row][i]
+
+    return decrypted_text
 
 def select_cipher_type():
     print("Select the cipher type:")
     print("1. Caesar Cipher")
     print("2. Vigenère Cipher")
+    print("3. Rail Fence Cipher")
     choice = input("Enter the number corresponding to the cipher type: ")
     return choice
 
 def main():
-    cipher_choice = select_cipher_type()
+    cipher_choice = None
+
+    while cipher_choice not in ['1', '2', '3']:
+        print("Select the cipher type:")
+        print("1. Caesar Cipher")
+        print("2. Vigenère Cipher")
+        print("3. Rail Fence Cipher")
+        cipher_choice = input("Enter the number corresponding to the cipher type: ")
 
     if cipher_choice == '1':
         # Caesar Cipher
@@ -235,15 +310,7 @@ def main():
         if choice.lower() == 'file':
             file_name = input("Enter the name of the input file (Note: The file must be in the same directory as the Python file): ")
             key = input("Enter the encryption/decryption key: ")
-            if action.lower() == 'decrypt' and key.lower() == 'none':
-                output_file_name = "vigenere_bruteforce_decrypted.txt"
-                with open(file_name, "r") as in_file:
-                    text = in_file.read()
-                output = crack_vigenere(text)
-                with open(output_file_name, "w") as out_file:
-                    out_file.write(f"Vigenere Bruteforce Decryption Result:\n{output}\n")
-                print(f"Bruteforce decryption result written to {output_file_name}.")
-            elif action.lower() == 'decrypt':
+            if action.lower() == 'decrypt':
                 output_file_name = get_unique_file_name("vigenere_decrypted.txt")
                 with open(file_name, "r") as in_file:
                     text = in_file.read()
@@ -266,14 +333,7 @@ def main():
                 
         elif choice.lower() == 'text':
             key = input("Enter the encryption/decryption key: ")
-            if action.lower() == 'decrypt' and key.lower() == 'none':
-                cipher_text = input("Enter the cipher text: ")
-                output = crack_vigenere(cipher_text)
-                output_file_name = get_unique_file_name("vigenere_bruteforce_decrypted.txt")
-                with open(output_file_name, "w") as out_file:
-                    out_file.write(f"Vigenere Bruteforce Decryption Result:\n{output}\n")
-                print(f"Bruteforce decryption result written to {output_file_name}.")
-            elif action.lower() == 'decrypt':
+            if action.lower() == 'decrypt':
                 cipher_text = input("Enter the cipher text: ")
                 output = decrypt_vigenere(cipher_text, key)
                 output_file_name = get_unique_file_name("vigenere_decrypted.txt")
@@ -291,8 +351,62 @@ def main():
                     out_file.write(f"Plain Text: {plain_text}\n")
                     out_file.write(f"Encrypted Text: {output}\n")
                 print(f"Encrypted text written to {output_file_name}.")
-    else:
-        print("Invalid choice.")
+
+    elif cipher_choice == '3':
+        # Rail Fence Cipher
+        action = input("Enter 'decrypt' to decrypt a message or 'encrypt' to encrypt a message: ")
+        while action.lower() not in ['decrypt', 'encrypt']:
+            print("Invalid choice. Please enter 'decrypt' or 'encrypt'.")
+            action = input("Enter 'decrypt' to decrypt a message or 'encrypt' to encrypt a message: ")
         
+        choice = input("Enter 'file' to read from a file or 'text' to type the text manually: ")
+        while choice.lower() not in ['file', 'text']:
+            print("Invalid choice. Please enter 'file' or 'text'.")
+            choice = input("Enter 'file' to read from a file or 'text' to type the text manually: ")
+        
+        key = None
+        while not isinstance(key, int):
+            try:
+                key = int(input("Enter the Rail Fence key: "))
+                if key <= 0:
+                    print("Key must be a positive integer.")
+                    key = None
+            except ValueError:
+                print("Invalid key. Please enter a valid integer.")
+        
+        if choice.lower() == 'file':
+            file_name = input("Enter the name of the input file (Note: The file must be in the same directory as the Python file): ")
+            file_extension = file_name.split('.')[-1]
+            if action.lower() == 'decrypt':
+                with open(file_name, "r") as in_file:
+                    text = in_file.read()
+                decrypted_text = decrypt_rail_fence(text, key)
+                output_file_name = f"rail_fence_decrypted_key_{key}.{file_extension}"
+                with open(output_file_name, "w") as out_file:
+                    out_file.write(f"Key: {key}\n")
+                    out_file.write(f"Cipher Text: {text}\n")
+                    out_file.write(f"Decrypted Text: {decrypted_text}\n")
+                print(f"Decrypted text for key {key} written to {output_file_name}.")
+            elif action.lower() == 'encrypt':
+                with open(file_name, "r") as in_file:
+                    text = in_file.read()
+                encrypted_text = encrypt_rail_fence(text, key)
+                output_file_name = f"rail_fence_encrypted_key_{key}.{file_extension}"
+                with open(output_file_name, "w") as out_file:
+                    out_file.write(f"Key: {key}\n")
+                    out_file.write(f"Plain Text: {text}\n")
+                    out_file.write(f"Encrypted Text: {encrypted_text}\n")
+                print(f"Encrypted text for key {key} written to {output_file_name}.")
+
+        elif choice.lower() == 'text':
+            if action.lower() == 'decrypt':
+                cipher_text = input("Enter the cipher text: ")
+                decrypted_text = decrypt_rail_fence(cipher_text, key)
+                print(f"Decrypted text for key {key}: {decrypted_text}")
+            elif action.lower() == 'encrypt':
+                plain_text = input("Enter the plain text: ")
+                encrypted_text = encrypt_rail_fence(plain_text, key)
+                print(f"Encrypted text for key {key}: {encrypted_text}")
+
 if __name__ == "__main__":
     main()
