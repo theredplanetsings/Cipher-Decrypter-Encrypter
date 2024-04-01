@@ -1,49 +1,68 @@
 import string
 import os
 """
-This program provides functionality for encrypting and decrypting text
-using various classical ciphers, currently being the Caesar Cipher, Vigenère Cipher, and Rail Fence Cipher.
-
-Usage:
-    python3 cipher.py
+This Python program provides functionality to encrypt/decrypt ciphers from .txt files or manually-typed input 
+using the bruteforce method or a given key. Currently, it supports the Caesar cipher, the Vigenere cipher, 
+the Rail Fence cipher (no offset), as well as Decimal, Hexadecimal, and Binary conversions.
 
 Dependencies:
-    None
+    Python 3.x
 
 Functions:
     shift_text(text, shift):
         Shifts each letter in the input text by the specified number of positions.
-
+        
     count_frequencies(text):
         Returns a list of the letter frequencies in the input text.
-
+        
     distance(freq1, freq2):
         Returns the distance between two frequency distributions.
-
+        
+    get_unique_file_name(file_name):
+        Generates a unique file name by appending a counter to the base file name.
+        
     crack_cipher_from_text(cipher_text):
         Bruteforces the Caesar cipher from manually entered text.
-
+        
     crack_cipher_from_file(file_name, action):
         Bruteforces the Caesar cipher from a text file. 'action' specifies whether to encrypt or decrypt.
-
+        
     encrypt_text(text):
         Encrypts the input text using all possible Caesar cipher variations.
-
+        
     encrypt_vigenere(text, key):
         Encrypts the input text using the Vigenère Cipher with the specified key.
-
+        
     decrypt_vigenere(text, key):
         Decrypts the input text using the Vigenère Cipher with the specified key.
-
+        
     encrypt_rail_fence(text, key):
         Encrypts the input text using the Rail Fence Cipher with the specified key.
-
+        
     decrypt_rail_fence(text, key):
         Decrypts the input text using the Rail Fence Cipher with the specified key.
-
+        
+    encrypt_decimal(text):
+        Converts the input text to decimal ASCII values.
+        
+    decrypt_decimal(text):
+        Converts the input decimal ASCII values to text.
+        
+    encrypt_hexadecimal(text):
+        Converts the input text to hexadecimal ASCII values.
+        
+    decrypt_hexadecimal(text):
+        Converts the input hexadecimal ASCII values to text.
+        
+    encrypt_binary(text):
+        Converts the input text to binary ASCII values.
+        
+    decrypt_binary(text):
+        Converts the input binary ASCII values to text.
+        
     select_cipher_type():
-        Prompts the user to select the cipher type: Caesar Cipher, Vigenère Cipher, or Rail Fence Cipher.
-
+        Prompts the user to select the cipher type: Caesar, Vigenère, Rail Fence, Decimal, Hexadecimal, or Binary.
+    
     main():
         Executes the main functionality of the program:
         - Prompts the user to select the cipher type.
@@ -250,23 +269,51 @@ def decrypt_rail_fence(text, key):
 
     return decrypted_text
 
+def encrypt_decimal(text):
+    encrypted_text = ' '.join(str(ord(char)) for char in text)
+    return encrypted_text
+
+def decrypt_decimal(text):
+    decrypted_text = ''.join(chr(int(char)) for char in text.split())
+    return decrypted_text
+
+def encrypt_hexadecimal(text):
+    encrypted_text = ' '.join(hex(ord(char))[2:] for char in text)
+    return encrypted_text
+
+def decrypt_hexadecimal(text):
+    decrypted_text = ''.join(chr(int(char, 16)) for char in text.split())
+    return decrypted_text
+
+def encrypt_binary(text):
+    encrypted_text = ' '.join(format(ord(char), '08b') for char in text)
+    return encrypted_text
+
+def decrypt_binary(text):
+    decrypted_text = ''.join(chr(int(char, 2)) for char in text.split())
+    return decrypted_text
+
 def select_cipher_type():
     print("Select the cipher type:")
     print("1. Caesar Cipher")
     print("2. Vigenère Cipher")
     print("3. Rail Fence Cipher")
+    print("4. Decimal Cipher")
+    print("5. Hexadecimal Cipher")
+    print("6. Binary Cipher")
     choice = input("Enter the number corresponding to the cipher type: ")
     return choice
 
 def main():
     cipher_choice = None
 
-    while cipher_choice not in ['1', '2', '3']:
-        print("Select the cipher type:")
-        print("1. Caesar Cipher")
-        print("2. Vigenère Cipher")
-        print("3. Rail Fence Cipher")
-        cipher_choice = input("Enter the number corresponding to the cipher type: ")
+    while cipher_choice not in ['1', '2', '3', '4', '5', '6']:
+        cipher_choice = select_cipher_type()
+
+    if cipher_choice in ['1', '2', '3']:
+        # Existing ciphers: Caesar, Vigenère, Rail Fence
+        # No changes needed here
+        pass
 
     if cipher_choice == '1':
         # Caesar Cipher
@@ -407,6 +454,168 @@ def main():
                 plain_text = input("Enter the plain text: ")
                 encrypted_text = encrypt_rail_fence(plain_text, key)
                 print(f"Encrypted text for key {key}: {encrypted_text}")
+
+    elif cipher_choice == '4':
+        # Decimal Cipher
+        action = input("Enter 'decrypt' to decrypt a message or 'encrypt' to encrypt a message: ")
+        while action.lower() not in ['decrypt', 'encrypt']:
+            print("Invalid choice. Please enter 'decrypt' or 'encrypt'.")
+            action = input("Enter 'decrypt' to decrypt a message or 'encrypt' to encrypt a message: ")
+
+        choice = input("Enter 'file' to read from a file or 'text' to type the text manually: ")
+        while choice.lower() not in ['file', 'text']:
+            print("Invalid choice. Please enter 'file' or 'text'.")
+            choice = input("Enter 'file' to read from a file or 'text' to type the text manually: ")
+
+        if choice.lower() == 'file':
+            file_name = input("Enter the name of the input file (Note: The file must be in the same directory as the Python file): ")
+            file_extension = file_name.split('.')[-1]
+            if action.lower() == 'decrypt':
+                with open(file_name, "r") as in_file:
+                    text = in_file.read()
+                decrypted_text = decrypt_decimal(text)
+                output_file_name = f"decimal_decrypted.{file_extension}"
+                with open(output_file_name, "w") as out_file:
+                    out_file.write(f"Decimal Text: {text}\n")
+                    out_file.write(f"Decrypted Text: {decrypted_text}\n")
+                print(f"Decrypted text written to {output_file_name}.")
+            elif action.lower() == 'encrypt':
+                with open(file_name, "r") as in_file:
+                    text = in_file.read()
+                encrypted_text = encrypt_decimal(text)
+                output_file_name = f"decimal_encrypted.{file_extension}"
+                with open(output_file_name, "w") as out_file:
+                    out_file.write(f"Plain Text: {text}\n")
+                    out_file.write(f"Decimal Text: {encrypted_text}\n")
+                print(f"Encrypted text written to {output_file_name}.")
+
+        elif choice.lower() == 'text':
+            if action.lower() == 'decrypt':
+                while True:
+                    decimal_text = input("Enter the decimal text (space-separated numbers): ")
+                    if all(char.isdigit() or char.isspace() for char in decimal_text):
+                        decrypted_text = decrypt_decimal(decimal_text)
+                        print(f"Decrypted text: {decrypted_text}")
+                        break
+                    else:
+                        print("Invalid input. Please enter numbers separated by spaces.")
+            elif action.lower() == 'encrypt':
+                while True:
+                    plain_text = input("Enter the plain text: ")
+                    if plain_text.isdigit():
+                        encrypted_text = encrypt_decimal(plain_text)
+                        print(f"Encrypted text: {encrypted_text}")
+                        break
+                    else:
+                        print("Invalid input. Please enter a number.")
+
+    elif cipher_choice == '5':
+        # Hexadecimal Cipher
+        action = input("Enter 'decrypt' to decrypt a message or 'encrypt' to encrypt a message: ")
+        while action.lower() not in ['decrypt', 'encrypt']:
+            print("Invalid choice. Please enter 'decrypt' or 'encrypt'.")
+            action = input("Enter 'decrypt' to decrypt a message or 'encrypt' to encrypt a message: ")
+
+        choice = input("Enter 'file' to read from a file or 'text' to type the text manually: ")
+        while choice.lower() not in ['file', 'text']:
+            print("Invalid choice. Please enter 'file' or 'text'.")
+            choice = input("Enter 'file' to read from a file or 'text' to type the text manually: ")
+
+        if choice.lower() == 'file':
+            file_name = input("Enter the name of the input file (Note: The file must be in the same directory as the Python file): ")
+            file_extension = file_name.split('.')[-1]
+            if action.lower() == 'decrypt':
+                with open(file_name, "r") as in_file:
+                    text = in_file.read()
+                decrypted_text = decrypt_hexadecimal(text)
+                output_file_name = f"hexadecimal_decrypted.{file_extension}"
+                with open(output_file_name, "w") as out_file:
+                    out_file.write(f"Hexadecimal Text: {text}\n")
+                    out_file.write(f"Decrypted Text: {decrypted_text}\n")
+                print(f"Decrypted text written to {output_file_name}.")
+            elif action.lower() == 'encrypt':
+                with open(file_name, "r") as in_file:
+                    text = in_file.read()
+                encrypted_text = encrypt_hexadecimal(text)
+                output_file_name = f"hexadecimal_encrypted.{file_extension}"
+                with open(output_file_name, "w") as out_file:
+                    out_file.write(f"Plain Text: {text}\n")
+                    out_file.write(f"Hexadecimal Text: {encrypted_text}\n")
+                print(f"Encrypted text written to {output_file_name}.")
+
+        elif choice.lower() == 'text':
+            if action.lower() == 'decrypt':
+                while True:
+                    hex_text = input("Enter the hexadecimal text (with or without '0x' prefix): ")
+                    if all(char.isdigit() or char.lower() in 'abcdefx' for char in hex_text):
+                        decrypted_text = decrypt_hexadecimal(hex_text)
+                        print(f"Decrypted text: {decrypted_text}")
+                        break
+                    else:
+                        print("Invalid input. Please enter a valid hexadecimal string.")
+            elif action.lower() == 'encrypt':
+                while True:
+                    plain_text = input("Enter the plain text: ")
+                    if all(char.isalnum() or char.isspace() for char in plain_text):
+                        encrypted_text = encrypt_hexadecimal(plain_text)
+                        print(f"Encrypted text: {encrypted_text}")
+                        break
+                    else:
+                        print("Invalid input. Please enter alphanumeric characters only.")
+
+    elif cipher_choice == '6':
+        # Binary Cipher
+        action = input("Enter 'decrypt' to decrypt a message or 'encrypt' to encrypt a message: ")
+        while action.lower() not in ['decrypt', 'encrypt']:
+            print("Invalid choice. Please enter 'decrypt' or 'encrypt'.")
+            action = input("Enter 'decrypt' to decrypt a message or 'encrypt' to encrypt a message: ")
+
+        choice = input("Enter 'file' to read from a file or 'text' to type the text manually: ")
+        while choice.lower() not in ['file', 'text']:
+            print("Invalid choice. Please enter 'file' or 'text'.")
+            choice = input("Enter 'file' to read from a file or 'text' to type the text manually: ")
+
+        if choice.lower() == 'file':
+            file_name = input("Enter the name of the input file (Note: The file must be in the same directory as the Python file): ")
+            file_extension = file_name.split('.')[-1]
+            if action.lower() == 'decrypt':
+                with open(file_name, "r") as in_file:
+                    text = in_file.read()
+                decrypted_text = decrypt_binary(text)
+                output_file_name = f"binary_decrypted.{file_extension}"
+                with open(output_file_name, "w") as out_file:
+                    out_file.write(f"Binary Text: {text}\n")
+                    out_file.write(f"Decrypted Text: {decrypted_text}\n")
+                print(f"Decrypted text written to {output_file_name}.")
+            elif action.lower() == 'encrypt':
+                with open(file_name, "r") as in_file:
+                    text = in_file.read()
+                encrypted_text = encrypt_binary(text)
+                output_file_name = f"binary_encrypted.{file_extension}"
+                with open(output_file_name, "w") as out_file:
+                    out_file.write(f"Plain Text: {text}\n")
+                    out_file.write(f"Binary Text: {encrypted_text}\n")
+                print(f"Encrypted text written to {output_file_name}.")
+
+        elif choice.lower() == 'text':
+            if action.lower() == 'decrypt':
+                while True:
+                    binary_text = input("Enter the binary text (space-separated values): ")
+                    if all(char in '01 ' for char in binary_text):
+                        decrypted_text = decrypt_binary(binary_text)
+                        print(f"Decrypted text: {decrypted_text}")
+                        break
+                    else:
+                        print("Invalid input. Please enter binary digits separated by spaces.")
+            elif action.lower() == 'encrypt':
+                while True:
+                    plain_text = input("Enter the plain text: ")
+                    if all(char.isascii() for char in plain_text):
+                        encrypted_text = encrypt_binary(plain_text)
+                        print(f"Encrypted text: {encrypted_text}")
+                        break
+                    else:
+                        print("Invalid input. Please enter ASCII characters only.")
 
 if __name__ == "__main__":
     main()
