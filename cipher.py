@@ -502,7 +502,7 @@ def main():
             elif action.lower() == 'encrypt':
                 while True:
                     plain_text = input("Enter the plain text: ")
-                    if plain_text.isdigit():
+                    if plain_text.isascii():
                         encrypted_text = encrypt_decimal(plain_text)
                         print(f"Encrypted text: {encrypted_text}")
                         break
@@ -547,7 +547,7 @@ def main():
             if action.lower() == 'decrypt':
                 while True:
                     hex_text = input("Enter the hexadecimal text (with or without '0x' prefix): ")
-                    if all(char.isdigit() or char.lower() in 'abcdefx' for char in hex_text):
+                    if all(char.isalnum() or char.lower() in 'abcdefx ' for char in hex_text):  # Added space in the string
                         decrypted_text = decrypt_hexadecimal(hex_text)
                         print(f"Decrypted text: {decrypted_text}")
                         break
@@ -556,7 +556,7 @@ def main():
             elif action.lower() == 'encrypt':
                 while True:
                     plain_text = input("Enter the plain text: ")
-                    if all(char.isalnum() or char.isspace() for char in plain_text):
+                    if all(char.isascii() or char.isspace() for char in plain_text):
                         encrypted_text = encrypt_hexadecimal(plain_text)
                         print(f"Encrypted text: {encrypted_text}")
                         break
