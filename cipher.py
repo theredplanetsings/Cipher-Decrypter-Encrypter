@@ -304,6 +304,24 @@ def select_cipher_type():
     choice = input("Enter the number corresponding to the cipher type: ")
     return choice
 
+def ascii_to_hex(ascii_text):
+    return ' '.join([hex(ord(c))[2:] for c in ascii_text])
+
+def ascii_to_binary(ascii_text):
+    return ' '.join([bin(ord(c))[2:].zfill(8) for c in ascii_text])
+
+def ascii_to_decimal(ascii_text):
+    return ' '.join([str(ord(c)) for c in ascii_text])
+
+def decimal_to_ascii(decimal_text):
+    return ''.join([chr(int(i)) for i in decimal_text.split()])
+
+def hex_to_ascii(hex_text):
+    return ''.join([chr(int(i, 16)) for i in hex_text.split()])
+
+def binary_to_ascii(binary_text):
+    return ''.join([chr(int(i, 2)) for i in binary_text.split()])
+
 def main():
     cipher_choice = None
 
@@ -494,8 +512,12 @@ def main():
                 while True:
                     decimal_text = input("Enter the decimal text (space-separated numbers): ")
                     if all(char.isdigit() or char.isspace() for char in decimal_text):
-                        decrypted_text = decrypt_decimal(decimal_text)
-                        print(f"Decrypted text: {decrypted_text}")
+                        decrypted_text = decimal_to_ascii(decimal_text)
+                        print(f"Ascii Conversion: {decrypted_text}")
+                        hex_text = ascii_to_hex(decrypted_text)
+                        print(f"Hexadecimal Conversion: {hex_text}")
+                        binary_text = ascii_to_binary(decrypted_text)
+                        print(f"Binary Conversion: {binary_text}")
                         break
                     else:
                         print("Invalid input. Please enter numbers separated by spaces.")
@@ -503,8 +525,12 @@ def main():
                 while True:
                     plain_text = input("Enter the plain text: ")
                     if plain_text.isascii():
-                        encrypted_text = encrypt_decimal(plain_text)
-                        print(f"Encrypted text: {encrypted_text}")
+                        decimal_text = ascii_to_decimal(plain_text)
+                        print(f"Decimal Conversion: {decimal_text}")
+                        hex_text = ascii_to_hex(plain_text)
+                        print(f"Hexadecimal Conversion: {hex_text}")
+                        binary_text = ascii_to_binary(plain_text)
+                        print(f"Binary Conversion: {binary_text}")
                         break
                     else:
                         print("Invalid input. Please enter a number.")
@@ -543,25 +569,63 @@ def main():
                     out_file.write(f"Hexadecimal Text: {encrypted_text}\n")
                 print(f"Encrypted text written to {output_file_name}.")
 
+        # Hexadecimal Cipher
         elif choice.lower() == 'text':
             if action.lower() == 'decrypt':
                 while True:
                     hex_text = input("Enter the hexadecimal text (with or without '0x' prefix): ")
-                    if all(char.isalnum() or char.lower() in 'abcdefx ' for char in hex_text):  # Added space in the string
-                        decrypted_text = decrypt_hexadecimal(hex_text)
-                        print(f"Decrypted text: {decrypted_text}")
+                    if all(char.isalnum() or char.lower() in 'abcdefx ' for char in hex_text):
+                        decrypted_text = hex_to_ascii(hex_text)
+                        print(f"Ascii Conversion: {decrypted_text}")
+                        decimal_text = ascii_to_decimal(decrypted_text)
+                        print(f"Decimal Conversion: {decimal_text}")
+                        binary_text = ascii_to_binary(decrypted_text)
+                        print(f"Binary Conversion: {binary_text}")
                         break
                     else:
                         print("Invalid input. Please enter a valid hexadecimal string.")
             elif action.lower() == 'encrypt':
                 while True:
                     plain_text = input("Enter the plain text: ")
-                    if all(char.isascii() or char.isspace() for char in plain_text):
-                        encrypted_text = encrypt_hexadecimal(plain_text)
-                        print(f"Encrypted text: {encrypted_text}")
+                    if plain_text.isascii():
+                        hex_text = ascii_to_hex(plain_text)
+                        print(f"Hexadecimal Conversion: {hex_text}")
+                        decimal_text = ascii_to_decimal(plain_text)
+                        print(f"Decimal Conversion: {decimal_text}")
+                        binary_text = ascii_to_binary(plain_text)
+                        print(f"Binary Conversion: {binary_text}")
                         break
                     else:
-                        print("Invalid input. Please enter alphanumeric characters only.")
+                        print("Invalid input. Please enter ASCII characters only.")
+
+        # Binary Cipher
+        elif choice.lower() == 'text':
+            if action.lower() == 'decrypt':
+                while True:
+                    binary_text = input("Enter the binary text (space-separated 8-bit values): ")
+                    if all(char in '01 ' for char in binary_text):
+                        decrypted_text = binary_to_ascii(binary_text)
+                        print(f"Ascii Conversion: {decrypted_text}")
+                        decimal_text = ascii_to_decimal(decrypted_text)
+                        print(f"Decimal Conversion: {decimal_text}")
+                        hex_text = ascii_to_hex(decrypted_text)
+                        print(f"Hexadecimal Conversion: {hex_text}")
+                        break
+                    else:
+                        print("Invalid input. Please enter binary digits separated by spaces.")
+            elif action.lower() == 'encrypt':
+                while True:
+                    plain_text = input("Enter the plain text: ")
+                    if plain_text.isascii():
+                        binary_text = ascii_to_binary(plain_text)
+                        print(f"Binary Conversion: {binary_text}")
+                        decimal_text = ascii_to_decimal(plain_text)
+                        print(f"Decimal Conversion: {decimal_text}")
+                        hex_text = ascii_to_hex(plain_text)
+                        print(f"Hexadecimal Conversion: {hex_text}")
+                        break
+                    else:
+                        print("Invalid input. Please enter ASCII characters only.")
 
     elif cipher_choice == '6':
         # Binary Cipher
@@ -600,19 +664,27 @@ def main():
         elif choice.lower() == 'text':
             if action.lower() == 'decrypt':
                 while True:
-                    binary_text = input("Enter the binary text (space-separated values): ")
+                    binary_text = input("Enter the binary text (space-separated 8-bit values): ")
                     if all(char in '01 ' for char in binary_text):
-                        decrypted_text = decrypt_binary(binary_text)
-                        print(f"Decrypted text: {decrypted_text}")
+                        decrypted_text = binary_to_ascii(binary_text)
+                        print(f"Ascii Conversion: {decrypted_text}")
+                        decimal_text = ascii_to_decimal(decrypted_text)
+                        print(f"Decimal Conversion: {decimal_text}")
+                        hex_text = ascii_to_hex(decrypted_text)
+                        print(f"Hexadecimal Conversion: {hex_text}")
                         break
                     else:
                         print("Invalid input. Please enter binary digits separated by spaces.")
             elif action.lower() == 'encrypt':
                 while True:
                     plain_text = input("Enter the plain text: ")
-                    if all(char.isascii() for char in plain_text):
-                        encrypted_text = encrypt_binary(plain_text)
-                        print(f"Encrypted text: {encrypted_text}")
+                    if plain_text.isascii():
+                        binary_text = ascii_to_binary(plain_text)
+                        print(f"Binary Conversion: {binary_text}")
+                        decimal_text = ascii_to_decimal(plain_text)
+                        print(f"Decimal Conversion: {decimal_text}")
+                        hex_text = ascii_to_hex(plain_text)
+                        print(f"Hexadecimal Conversion: {hex_text}")
                         break
                     else:
                         print("Invalid input. Please enter ASCII characters only.")
