@@ -42,26 +42,32 @@ Functions:
     decrypt_rail_fence(text, key):
         Decrypts the input text using the Rail Fence Cipher with the specified key.
         
-    encrypt_decimal(text):
-        Converts the input text to decimal ASCII values.
+    ascii_to_decimal(text):
+        Converts the input ASCII text to decimal values.
         
-    decrypt_decimal(text):
-        Converts the input decimal ASCII values to text.
+    decimal_to_ascii(text):
+        Converts the input decimal values to ASCII text.
         
-    encrypt_hexadecimal(text):
-        Converts the input text to hexadecimal ASCII values.
+    ascii_to_hexadecimal(text):
+        Converts the input ASCII text to hexadecimal values.
         
-    decrypt_hexadecimal(text):
-        Converts the input hexadecimal ASCII values to text.
+    hexadecimal_to_ascii(text):
+        Converts the input hexadecimal values to ASCII text.
         
-    encrypt_binary(text):
-        Converts the input text to binary ASCII values.
+    ascii_to_binary(text):
+        Converts the input ASCII text to binary values.
         
-    decrypt_binary(text):
-        Converts the input binary ASCII values to text.
+    binary_to_ascii(text):
+        Converts the input binary values to ASCII text.
+        
+    ascii_to_octal(text):
+        Converts the input ASCII text to octal values.
+        
+    octal_to_ascii(text):
+        Converts the input octal values to ASCII text.
         
     select_cipher_type():
-        Prompts the user to select the cipher type: Caesar, Vigenère, Rail Fence, Decimal, Hexadecimal, or Binary.
+        Prompts the user to select the cipher type: Caesar, Vigenère, Rail Fence, Decimal, Hexadecimal, Binary, or Octal.
     
     main():
         Executes the main functionality of the program:
@@ -74,7 +80,6 @@ Example:
     Enter the name of the input file (Note: The file must be in the same directory as the Python file): encrypted_text.txt
     Decoded text (shift forward 1): ...
     Decoded text (shift forward 2): ...
-    ...
 """
 __author__ = "https://github.com/theredplanetsings"
 __date__ = "30/03/2024"
