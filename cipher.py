@@ -3,7 +3,7 @@ import os
 """
 This Python program provides functionality to encrypt/decrypt ciphers from .txt files or manually-typed input 
 using the bruteforce method or a given key. Currently, it supports the Caesar cipher, the Vigenere cipher, 
-the Rail Fence cipher (no offset), as well as Decimal, Hexadecimal, and Binary conversions.
+the Rail Fence cipher (no offset), as well as Decimal, Hexadecimal, Binary, and Octal conversions.
 
 Dependencies:
     Python 3.x
@@ -293,17 +293,6 @@ def decrypt_binary(text):
     decrypted_text = ''.join(chr(int(char, 2)) for char in text.split())
     return decrypted_text
 
-def select_cipher_type():
-    print("Select the cipher type:")
-    print("1. Caesar Cipher")
-    print("2. Vigenère Cipher")
-    print("3. Rail Fence Cipher")
-    print("4. Decimal Cipher")
-    print("5. Hexadecimal Cipher")
-    print("6. Binary Cipher")
-    choice = input("Enter the number corresponding to the cipher type: ")
-    return choice
-
 def ascii_to_hex(ascii_text):
     return ' '.join([hex(ord(c))[2:] for c in ascii_text])
 
@@ -313,19 +302,72 @@ def ascii_to_binary(ascii_text):
 def ascii_to_decimal(ascii_text):
     return ' '.join([str(ord(c)) for c in ascii_text])
 
+def ascii_to_octal(ascii_text):
+    return ' '.join([oct(ord(c))[2:] for c in ascii_text])
+
 def decimal_to_ascii(decimal_text):
     return ''.join([chr(int(i)) for i in decimal_text.split()])
+
+def decimal_to_binary(decimal_text):
+    return ' '.join([bin(int(i))[2:].zfill(8) for i in decimal_text.split()])
+
+def decimal_to_hex(decimal_text):
+    return ' '.join([hex(int(i))[2:] for i in decimal_text.split()])
+
+def decimal_to_octal(decimal_text):
+    return ' '.join([oct(int(i))[2:] for i in decimal_text.split()])
 
 def hex_to_ascii(hex_text):
     return ''.join([chr(int(i, 16)) for i in hex_text.split()])
 
+def hex_to_decimal(hex_text):
+    return ' '.join([str(int(i, 16)) for i in hex_text.split()])
+
+def hex_to_binary(hex_text):
+    return ' '.join([bin(int(i, 16))[2:].zfill(8) for i in hex_text.split()])
+
+def hex_to_octal(hex_text):
+    return ' '.join([oct(int(i, 16))[2:] for i in hex_text.split()])
+
 def binary_to_ascii(binary_text):
     return ''.join([chr(int(i, 2)) for i in binary_text.split()])
 
+def binary_to_decimal(binary_text):
+    return ' '.join([str(int(i, 2)) for i in binary_text.split()])
+
+def binary_to_hex(binary_text):
+    return ' '.join([hex(int(i, 2))[2:] for i in binary_text.split()])
+
+def binary_to_octal(binary_text):
+    return ' '.join([oct(int(i, 2))[2:] for i in binary_text.split()])
+
+def octal_to_ascii(octal_text):
+    return ''.join([chr(int(i, 8)) for i in octal_text.split()])
+
+def octal_to_decimal(octal_text):
+    return ' '.join([str(int(i, 8)) for i in octal_text.split()])
+
+def octal_to_hex(octal_text):
+    return ' '.join([hex(int(i, 8))[2:] for i in octal_text.split()])
+
+def octal_to_binary(octal_text):
+    return ' '.join([bin(int(i, 8))[2:].zfill(8) for i in octal_text.split()])
+
+def select_cipher_type():
+    print("Select the cipher type:")
+    print("1. Caesar Cipher")
+    print("2. Vigenère Cipher")
+    print("3. Rail Fence Cipher")
+    print("4. Decimal Cipher")
+    print("5. Hexadecimal Cipher")
+    print("6. Binary Cipher")
+    print("7. Octal Cipher")
+    choice = input("Enter the number corresponding to the cipher type: ")
+    return choice
 def main():
     cipher_choice = None
 
-    while cipher_choice not in ['1', '2', '3', '4', '5', '6']:
+    while cipher_choice not in ['1', '2', '3', '4', '5', '6', '7']:
         cipher_choice = select_cipher_type()
 
     if cipher_choice in ['1', '2', '3']:
@@ -685,6 +727,76 @@ def main():
                         print(f"Decimal Conversion: {decimal_text}")
                         hex_text = ascii_to_hex(plain_text)
                         print(f"Hexadecimal Conversion: {hex_text}")
+                        break
+                    else:
+                        print("Invalid input. Please enter ASCII characters only.")
+    
+    elif cipher_choice == '7':
+        # Octal Cipher
+        action = input("Enter 'decrypt' to decrypt a message or 'encrypt' to encrypt a message: ")
+        while action.lower() not in ['decrypt', 'encrypt']:
+            print("Invalid choice. Please enter 'decrypt' or 'encrypt'.")
+            action = input("Enter 'decrypt' to decrypt a message or 'encrypt' to encrypt a message: ")
+
+        choice = input("Enter 'file' to read from a file or 'text' to type the text manually: ")
+        while choice.lower() not in ['file', 'text']:
+            print("Invalid choice. Please enter 'file' or 'text'.")
+            choice = input("Enter 'file' to read from a file or 'text' to type the text manually: ")
+
+        if choice.lower() == 'file':
+            file_name = input("Enter the name of the input file (Note: The file must be in the same directory as the Python file): ")
+            file_extension = file_name.split('.')[-1]
+            if action.lower() == 'decrypt':
+                with open(file_name, "r") as in_file:
+                    text = in_file.read()
+                decrypted_text = octal_to_ascii(text)
+                output_file_name = f"octal_decrypted.{file_extension}"
+                with open(output_file_name, "w") as out_file:
+                    out_file.write(f"Octal Text: {text}\n")
+                    out_file.write(f"Decrypted Text: {decrypted_text}\n")
+                print(f"Decrypted text written to {output_file_name}.")
+            elif action.lower() == 'encrypt':
+                with open(file_name, "r") as in_file:
+                    text = in_file.read()
+                encrypted_text = ascii_to_octal(text)
+                output_file_name = f"octal_encrypted.{file_extension}"
+                with open(output_file_name, "w") as out_file:
+                    out_file.write(f"Plain Text: {text}\n")
+                    out_file.write(f"Octal Text: {encrypted_text}\n")
+                print(f"Encrypted text written to {output_file_name}.")
+
+        elif choice.lower() == 'text':
+            if action.lower() == 'decrypt':
+                while True:
+                    octal_text = input("Enter the octal text (space-separated numbers): ")
+                    if all(char in '01234567 ' for char in octal_text):
+                        try:
+                            decrypted_text = octal_to_ascii(octal_text)
+                            print(f"Ascii Conversion: {decrypted_text}")
+                            decimal_text = octal_to_decimal(octal_text)
+                            print(f"Decimal Conversion: {decimal_text}")
+                            hex_text = octal_to_hex(octal_text)
+                            print(f"Hexadecimal Conversion: {hex_text}")
+                            binary_text = octal_to_binary(octal_text)
+                            print(f"Binary Conversion: {binary_text}")
+                            break
+                        except ValueError as e:
+                            print(f"An error occurred: {e}")
+                            break
+                    else:
+                        print("Invalid input. Please enter octal digits separated by spaces.")
+            elif action.lower() == 'encrypt':
+                while True:
+                    plain_text = input("Enter the plain text: ")
+                    if plain_text.isascii():
+                        octal_text = ascii_to_octal(plain_text)
+                        print(f"Octal Conversion: {octal_text}")
+                        decimal_text = ascii_to_decimal(plain_text)
+                        print(f"Decimal Conversion: {decimal_text}")
+                        hex_text = ascii_to_hex(plain_text)
+                        print(f"Hexadecimal Conversion: {hex_text}")
+                        binary_text = ascii_to_binary(plain_text)
+                        print(f"Binary Conversion: {binary_text}")
                         break
                     else:
                         print("Invalid input. Please enter ASCII characters only.")
